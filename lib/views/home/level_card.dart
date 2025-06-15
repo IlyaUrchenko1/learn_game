@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:learn_game/core/theme/app_colors.dart';
 import 'package:learn_game/models/level_model.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class LevelCard extends StatelessWidget {
   final Level level;
@@ -17,6 +19,7 @@ class LevelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
       elevation: isLocked ? 0 : 4,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -32,15 +35,16 @@ class LevelCard extends StatelessWidget {
               children: [
                 Icon(
                   isLocked
-                      ? Icons.lock_outline
+                      ? Symbols.lock_rounded
                       : isCompleted
-                      ? Icons.check_circle_outline
-                      : Icons.play_circle_outline,
+                      ? Symbols.check_circle_rounded
+                      : Symbols.play_circle_rounded,
+                  fill: isCompleted ? 1 : 0,
                   color: isLocked
-                      ? Colors.grey
+                      ? theme.colorScheme.onSurface.withOpacity(0.5)
                       : isCompleted
-                      ? Colors.green
-                      : Theme.of(context).primaryColor,
+                      ? theme.colorScheme.success
+                      : theme.colorScheme.primary,
                   size: 40,
                 ),
                 const SizedBox(width: 16),

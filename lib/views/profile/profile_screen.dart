@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:learn_game/data/levels_data.dart';
 import 'package:learn_game/providers/progress_provider.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -8,11 +10,12 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final String currentDate = DateFormat(
       'd MMMM yyyy',
       'ru_RU',
     ).format(DateTime.now());
-    const int totalLevels = 10; // Placeholder for total number of levels
+    final totalLevels = allLevels.length;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Профиль'), centerTitle: true),
@@ -23,10 +26,14 @@ class ProfileScreen extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
-              _buildProfileHeader(context, currentDate),
+              _buildProfileHeader(context, 'Игрок', currentDate),
               const SizedBox(height: 24),
               _buildProgressCard(context, completedCount, totalLevels),
               const SizedBox(height: 24),
+              _buildSectionTitle(context, 'Аккаунт'),
+              _buildAccountCard(context),
+              const SizedBox(height: 12),
+              _buildSectionTitle(context, 'Обратная связь'),
               _buildActionsCard(context),
               const SizedBox(height: 24),
               _buildDangerZone(context, progressProvider),
@@ -37,27 +44,36 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context, String currentDate) {
+  Widget _buildProfileHeader(
+    BuildContext context,
+    String name,
+    String registrationDate,
+  ) {
+    final theme = Theme.of(context);
     return Column(
       children: [
-        const CircleAvatar(
+        CircleAvatar(
           radius: 50,
-          backgroundColor: Colors.blueAccent,
-          child: Icon(Icons.person, size: 60, color: Colors.white),
+          backgroundColor: theme.colorScheme.primaryContainer,
+          child: Icon(
+            Symbols.account_circle,
+            size: 60,
+            color: theme.colorScheme.onPrimaryContainer,
+          ),
         ),
         const SizedBox(height: 16),
         Text(
-          'Привет, Игрок!',
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          'Привет, $name!',
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
-          'Сегодня: $currentDate',
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+          'В игре с $registrationDate',
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );
@@ -68,32 +84,35 @@ class ProfileScreen extends StatelessWidget {
     int completedCount,
     int totalLevels,
   ) {
+    final theme = Theme.of(context);
+    final progress = totalLevels > 0 ? completedCount / totalLevels : 0.0;
+
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Ваш прогресс',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
+            Text('Ваш прогресс', style: theme.textTheme.titleLarge),
             const SizedBox(height: 16),
             Row(
               children: [
-                const Icon(Icons.star, color: Colors.amber, size: 28),
+                Icon(Symbols.star, color: theme.colorScheme.tertiary),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Ты прошёл $completedCount из $totalLevels уровней',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    'Пройдено $completedCount из $totalLevels уровней',
+                    style: theme.textTheme.bodyLarge,
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 16),
+            LinearProgressIndicator(
+              value: progress,
+              minHeight: 8,
+              borderRadius: BorderRadius.circular(4),
+              backgroundColor: theme.colorScheme.surfaceContainerHighest,
             ),
           ],
         ),
@@ -101,42 +120,59 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionsCard(BuildContext context) {
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAccountCard(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Column(
         children: [
           ListTile(
-            leading: const Icon(Icons.rate_review_outlined, color: Colors.blue),
-            title: const Text('Оценить приложение'),
-            trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              // ignore: avoid_print
-              print('User wants to rate the app.');
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Спасибо за вашу оценку! (симуляция)'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            },
+            leading: const Icon(Symbols.manage_accounts),
+            title: const Text('Изменить данные'),
+            onTap: () {},
           ),
-          const Divider(height: 1, indent: 16, endIndent: 16),
           ListTile(
-            leading: const Icon(Icons.bug_report_outlined, color: Colors.green),
+            leading: const Icon(Symbols.shield),
+            title: const Text('Безопасность'),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: Icon(Symbols.logout, color: theme.colorScheme.error),
+            title: Text(
+              'Выйти',
+              style: TextStyle(color: theme.colorScheme.error),
+            ),
+            onTap: () {},
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionsCard(BuildContext context) {
+    return Card(
+      child: Column(
+        children: [
+          ListTile(
+            leading: const Icon(Symbols.rate_review),
+            title: const Text('Оценить приложение'),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: const Icon(Symbols.bug_report),
             title: const Text('Сообщить об ошибке'),
-            trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              // ignore: avoid_print
-              print('User wants to report a bug.');
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Отправка отчета об ошибке... (симуляция)'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            },
+            onTap: () {},
           ),
         ],
       ),
@@ -147,24 +183,56 @@ class ProfileScreen extends StatelessWidget {
     BuildContext context,
     ProgressProvider progressProvider,
   ) {
+    final theme = Theme.of(context);
     return Card(
-      elevation: 4,
-      color: Colors.red[50],
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: ListTile(
-        leading: const Icon(Icons.warning_amber_rounded, color: Colors.red),
-        title: const Text('Сбросить прогресс'),
-        subtitle: const Text('Это действие нельзя будет отменить'),
-        onTap: () {
-          progressProvider.resetProgress();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Прогресс сброшен!'),
-              backgroundColor: Colors.redAccent,
-              duration: Duration(seconds: 2),
+      color: theme.colorScheme.errorContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Symbols.warning,
+                  color: theme.colorScheme.onErrorContainer,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Опасная зона',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: theme.colorScheme.onErrorContainer,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
-          );
-        },
+            const SizedBox(height: 8),
+            Text(
+              'Сброс вашего прогресса приведет к окончательной потере всех ваших достижений. Это действие нельзя отменить.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onErrorContainer,
+              ),
+            ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: () {
+                progressProvider.resetProgress();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Прогресс сброшен!'),
+                    backgroundColor: theme.colorScheme.error,
+                  ),
+                );
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: theme.colorScheme.error,
+                foregroundColor: theme.colorScheme.onError,
+              ),
+              child: const Text('Сбросить мой прогресс'),
+            ),
+          ],
+        ),
       ),
     );
   }

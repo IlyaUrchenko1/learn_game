@@ -3,6 +3,7 @@ import 'package:learn_game/data/levels_data.dart';
 import 'package:learn_game/providers/progress_provider.dart';
 import 'package:learn_game/views/game/guide_screen.dart';
 import 'package:learn_game/views/home/level_card.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -15,7 +16,7 @@ class HomeScreen extends StatelessWidget {
         title: const Text('Уровни'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Symbols.refresh_rounded),
             onPressed: () {
               // Temp button to test progress
               Provider.of<ProgressProvider>(

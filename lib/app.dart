@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:learn_game/core/theme/app_theme.dart';
 import 'package:learn_game/models/level_model.dart';
 import 'package:learn_game/providers/progress_provider.dart';
 import 'package:learn_game/views/game/guide_screen.dart';
@@ -17,10 +18,9 @@ class App extends StatelessWidget {
       create: (context) => ProgressProvider(),
       child: MaterialApp(
         title: 'Learn Game',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.system,
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,

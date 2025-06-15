@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:learn_game/data/leaderboard_data.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class LeaderboardScreen extends StatelessWidget {
   const LeaderboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Таблица лидеров')),
       body: ListView.builder(
@@ -13,18 +16,46 @@ class LeaderboardScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final entry = leaderboardData[index];
           final rank = index + 1;
-          return ListTile(
-            leading: Text(
+
+          Widget leading;
+          if (rank <= 3) {
+            Color trophyColor;
+            switch (rank) {
+              case 1:
+                trophyColor = const Color(0xFFFFD700); // Gold
+                break;
+              case 2:
+                trophyColor = const Color(0xFFC0C0C0); // Silver
+                break;
+              case 3:
+                trophyColor = const Color(0xFFCD7F32); // Bronze
+                break;
+              default:
+                trophyColor = theme.colorScheme.onSurface;
+            }
+            leading = Icon(Symbols.trophy_rounded, color: trophyColor, fill: 1);
+          } else {
+            leading = Text(
               '#$rank',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            title: Text(
-              entry.name,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            trailing: Text(
-              'Уровней: ${entry.completedLevels}',
-              style: const TextStyle(fontSize: 16),
+            );
+          }
+
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            child: ListTile(
+              leading: leading,
+              title: Text(
+                entry.name,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              trailing: Text(
+                'Уровней: ${entry.completedLevels}',
+                style: const TextStyle(fontSize: 16),
+              ),
             ),
           );
         },

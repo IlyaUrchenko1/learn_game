@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:learn_game/views/home/home_screen.dart';
 import 'package:learn_game/views/leaderboard/leaderboard_screen.dart';
 import 'package:learn_game/views/profile/profile_screen.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -32,15 +33,18 @@ class _MainNavigationState extends State<MainNavigation> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.games_outlined),
+            icon: Icon(Symbols.stadia_controller_rounded),
+            activeIcon: Icon(Symbols.stadia_controller_rounded, fill: 1),
             label: 'Игра',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.leaderboard_outlined),
+            icon: Icon(Symbols.leaderboard_rounded),
+            activeIcon: Icon(Symbols.leaderboard_rounded, fill: 1),
             label: 'Топ',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
+            icon: Icon(Symbols.account_circle_rounded),
+            activeIcon: Icon(Symbols.account_circle_rounded, fill: 1),
             label: 'Профиль',
           ),
         ],

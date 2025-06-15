@@ -74,7 +74,7 @@ class _TestScreenState extends State<TestScreen> {
                   child: Text(answerText),
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),

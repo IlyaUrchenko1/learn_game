@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:learn_game/models/level_model.dart';
 import 'package:learn_game/providers/progress_provider.dart';
 import 'package:learn_game/views/game/guide_screen.dart';
@@ -20,6 +21,12 @@ class App extends StatelessWidget {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [Locale('ru', 'RU')],
         initialRoute: '/',
         onGenerateRoute: (settings) {
           if (settings.name == GuideScreen.routeName) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:learn_game/data/levels_data.dart';
 import 'package:learn_game/providers/progress_provider.dart';
+import 'package:learn_game/views/game/guide_screen.dart';
 import 'package:learn_game/views/home/level_card.dart';
 import 'package:provider/provider.dart';
 
@@ -42,9 +43,13 @@ class HomeScreen extends StatelessWidget {
                 isCompleted: isCompleted,
                 isLocked: isLocked,
                 onTap: () {
-                  // TODO: Navigate to the level guide/test screen
-                  // For now, just completing the level on tap for demonstration
-                  progressProvider.completeLevel(level.id);
+                  if (!isLocked) {
+                    Navigator.pushNamed(
+                      context,
+                      GuideScreen.routeName,
+                      arguments: level,
+                    );
+                  }
                 },
               );
             },

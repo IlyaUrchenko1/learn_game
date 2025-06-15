@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:learn_game/views/home/home_screen.dart';
-import 'package:learn_game/views/leaderboard/leaderboard_screen.dart';
-import 'package:learn_game/views/profile/profile_screen.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -15,8 +13,10 @@ class _MainNavigationState extends State<MainNavigation> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
-    ProfileScreen(),
-    LeaderboardScreen(),
+    // Placeholder for Profile Screen
+    Scaffold(body: Center(child: Text('Профиль'))),
+    // Placeholder for Leaderboard Screen
+    Scaffold(body: Center(child: Text('Таблица лидеров'))),
   ];
 
   void _onItemTapped(int index) {
@@ -31,9 +31,18 @@ class _MainNavigationState extends State<MainNavigation> {
       body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Главная'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Профиль'),
-          BottomNavigationBarItem(icon: Icon(Icons.leaderboard), label: 'Топ'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.games_outlined),
+            label: 'Игра',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Профиль',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.leaderboard_outlined),
+            label: 'Топ',
+          ),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,

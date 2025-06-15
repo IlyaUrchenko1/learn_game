@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:learn_game/providers/progress_provider.dart';
-import 'package:learn_game/views/game/game_screen.dart';
 import 'package:learn_game/views/main_navigation.dart';
 import 'package:provider/provider.dart';
 
@@ -18,10 +17,7 @@ class App extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         initialRoute: '/',
-        routes: {
-          '/': (context) => const MainNavigation(),
-          '/game': (context) => const GameScreen(),
-        },
+        routes: {'/': (context) => const MainNavigation()},
       ),
     );
   }

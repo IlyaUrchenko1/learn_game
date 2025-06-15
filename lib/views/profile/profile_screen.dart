@@ -10,7 +10,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    Theme.of(context);
     final String currentDate = DateFormat(
       'd MMMM yyyy',
       'ru_RU',
@@ -30,9 +30,6 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 24),
               _buildProgressCard(context, completedCount, totalLevels),
               const SizedBox(height: 24),
-              _buildSectionTitle(context, 'Аккаунт'),
-              _buildAccountCard(context),
-              const SizedBox(height: 12),
               _buildSectionTitle(context, 'Обратная связь'),
               _buildActionsCard(context),
               const SizedBox(height: 24),
@@ -128,34 +125,6 @@ class ProfileScreen extends StatelessWidget {
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
           color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
-      ),
-    );
-  }
-
-  Widget _buildAccountCard(BuildContext context) {
-    final theme = Theme.of(context);
-    return Card(
-      child: Column(
-        children: [
-          ListTile(
-            leading: const Icon(Symbols.manage_accounts),
-            title: const Text('Изменить данные'),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Symbols.shield),
-            title: const Text('Безопасность'),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: Icon(Symbols.logout, color: theme.colorScheme.error),
-            title: Text(
-              'Выйти',
-              style: TextStyle(color: theme.colorScheme.error),
-            ),
-            onTap: () {},
-          ),
-        ],
       ),
     );
   }

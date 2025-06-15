@@ -18,6 +18,8 @@ class TestScreen extends StatefulWidget {
 class _TestScreenState extends State<TestScreen> {
   int _currentQuestionIndex = 0;
   int _score = 0;
+  bool _hintUsed = false;
+  List<int> _hiddenAnswers = [];
 
   void _answerQuestion(int selectedAnswerIndex) {
     if (selectedAnswerIndex ==
@@ -28,6 +30,8 @@ class _TestScreenState extends State<TestScreen> {
     if (_currentQuestionIndex < widget.level.test.length - 1) {
       setState(() {
         _currentQuestionIndex++;
+        _hintUsed = false;
+        _hiddenAnswers = [];
       });
     } else {
       Navigator.of(context).pushReplacementNamed(
@@ -39,6 +43,23 @@ class _TestScreenState extends State<TestScreen> {
         },
       );
     }
+  }
+
+  void _useHint() {
+    final correctAnswerIndex =
+        widget.level.test[_currentQuestionIndex].correctAnswerIndex;
+    final incorrectAnswers = widget.level.test[_currentQuestionIndex].answers
+        .asMap()
+        .keys
+        .where((index) => index != correctAnswerIndex)
+        .toList();
+
+    incorrectAnswers.shuffle();
+
+    setState(() {
+      _hiddenAnswers = incorrectAnswers.take(2).toList();
+      _hintUsed = true;
+    });
   }
 
   @override
@@ -97,6 +118,11 @@ class _TestScreenState extends State<TestScreen> {
             ...currentQuestion.answers.asMap().entries.map((entry) {
               int idx = entry.key;
               String answerText = entry.value;
+
+              if (_hiddenAnswers.contains(idx)) {
+                return const SizedBox.shrink();
+              }
+
               return Padding(
                 padding: const EdgeInsets.only(bottom: 10.0),
                 child: FilledButton(
@@ -105,6 +131,16 @@ class _TestScreenState extends State<TestScreen> {
                 ),
               );
             }),
+            const Spacer(),
+            if (!_hintUsed)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: TextButton.icon(
+                  onPressed: _useHint,
+                  icon: const Icon(Symbols.lightbulb),
+                  label: const Text('Подсказка 50/50'),
+                ),
+              ),
           ],
         ),
       ),

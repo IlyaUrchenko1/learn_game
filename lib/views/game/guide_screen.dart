@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:learn_game/models/level_model.dart';
 import 'package:learn_game/views/game/test_screen.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -36,12 +37,10 @@ class GuideScreen extends StatelessWidget {
           children: [
             Expanded(
               child: Card(
-                child: SingleChildScrollView(
+                child: Markdown(
+                  data: level.guideText,
                   padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    level.guideText,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
+                  styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
                 ),
               ),
             ),

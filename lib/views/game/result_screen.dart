@@ -74,7 +74,7 @@ class ResultScreen extends StatelessWidget {
                           child: CircularProgressIndicator(
                             value: score / total,
                             strokeWidth: 8,
-                            backgroundColor: colorScheme.surfaceVariant,
+                            backgroundColor: colorScheme.surfaceContainerHighest,
                           ),
                         ),
                         Text(

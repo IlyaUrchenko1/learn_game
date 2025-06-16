@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "510887295011",
+    "project_id": "learn-game-project",
+    "storage_bucket": "learn-game-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:510887295011:android:ecd4632dbc1473c57dd996",
+        "android_client_info": {
+          "package_name": "com.example.learn_game"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6AsVpZZJogj1YN_v2PQQb781uS0SzsvA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

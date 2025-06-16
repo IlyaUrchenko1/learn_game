@@ -1,14 +1,22 @@
 import 'package:flutter/foundation.dart';
+import 'package:learn_game/data/services/leaderboard_service.dart';
+import 'package:learn_game/providers/name_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProgressProvider with ChangeNotifier {
   List<int> _completedLevels = [];
   SharedPreferences? _prefs;
+  final LeaderboardService _leaderboardService = LeaderboardService();
+  NameProvider? _nameProvider;
 
   List<int> get completedLevels => _completedLevels;
 
   ProgressProvider() {
     _init();
+  }
+
+  void updateNameProvider(NameProvider nameProvider) {
+    _nameProvider = nameProvider;
   }
 
   Future<void> _init() async {
@@ -29,6 +37,14 @@ class ProgressProvider with ChangeNotifier {
       _completedLevels.add(levelId);
       final completed = _completedLevels.map((id) => id.toString()).toList();
       await _prefs?.setStringList('completedLevels', completed);
+
+      if (_nameProvider != null) {
+        await _leaderboardService.updateUserScore(
+          _nameProvider!.name,
+          _completedLevels.length,
+        );
+      }
+
       notifyListeners();
     }
   }
@@ -38,8 +54,13 @@ class ProgressProvider with ChangeNotifier {
   }
 
   Future<void> resetProgress() async {
+    // We might want to clear the user's score in Firestore as well,
+    // but for now, we'll just clear it locally.
     _completedLevels = [];
     await _prefs?.remove('completedLevels');
+    if (_nameProvider != null) {
+      await _leaderboardService.updateUserScore(_nameProvider!.name, 0);
+    }
     notifyListeners();
   }
 }

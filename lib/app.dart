@@ -17,8 +17,15 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ProgressProvider()),
         ChangeNotifierProvider(create: (context) => NameProvider()),
+        ChangeNotifierProxyProvider<NameProvider, ProgressProvider>(
+          create: (context) => ProgressProvider(),
+          update: (context, nameProvider, progressProvider) {
+            if (progressProvider == null) return ProgressProvider();
+            progressProvider.updateNameProvider(nameProvider);
+            return progressProvider;
+          },
+        ),
       ],
       child: MaterialApp(
         title: 'Learn Game',

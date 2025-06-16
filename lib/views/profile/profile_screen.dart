@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:learn_game/data/levels_data.dart';
+import 'package:learn_game/providers/name_provider.dart';
 import 'package:learn_game/providers/progress_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
   Widget build(BuildContext context) {
-    Theme.of(context);
     final String currentDate = DateFormat(
       'd MMMM yyyy',
       'ru_RU',
@@ -19,14 +24,19 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Профиль'), centerTitle: true),
-      body: Consumer<ProgressProvider>(
-        builder: (context, progressProvider, child) {
+      body: Consumer2<ProgressProvider, NameProvider>(
+        builder: (context, progressProvider, nameProvider, child) {
           final completedCount = progressProvider.completedLevels.length;
 
           return ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
-              _buildProfileHeader(context, 'Игрок', currentDate),
+              _buildProfileHeader(
+                context,
+                nameProvider.name,
+                currentDate,
+                () => _showEditNameDialog(context, nameProvider),
+              ),
               const SizedBox(height: 24),
               _buildProgressCard(context, completedCount, totalLevels),
               const SizedBox(height: 24),
@@ -41,10 +51,49 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _showEditNameDialog(
+    BuildContext context,
+    NameProvider nameProvider,
+  ) async {
+    final nameController = TextEditingController(text: nameProvider.name);
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Изменить имя'),
+          content: TextField(
+            controller: nameController,
+            autofocus: true,
+            decoration: const InputDecoration(hintText: 'Введите ваше имя'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Отмена'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Сохранить'),
+              onPressed: () {
+                final newName = nameController.text.trim();
+                if (newName.isNotEmpty) {
+                  nameProvider.saveName(newName);
+                }
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildProfileHeader(
     BuildContext context,
     String name,
     String registrationDate,
+    VoidCallback onEdit,
   ) {
     final theme = Theme.of(context);
     return Column(
@@ -59,11 +108,20 @@ class ProfileScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        Text(
-          'Привет, $name!',
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Привет, $name!',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Symbols.edit, size: 20),
+              onPressed: onEdit,
+            ),
+          ],
         ),
         const SizedBox(height: 8),
         Text(

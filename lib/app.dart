@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:learn_game/core/theme/app_theme.dart';
 import 'package:learn_game/models/level_model.dart';
+import 'package:learn_game/providers/name_provider.dart';
 import 'package:learn_game/providers/progress_provider.dart';
 import 'package:learn_game/views/game/guide_screen.dart';
 import 'package:learn_game/views/game/result_screen.dart';
@@ -14,8 +15,11 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => ProgressProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ProgressProvider()),
+        ChangeNotifierProvider(create: (context) => NameProvider()),
+      ],
       child: MaterialApp(
         title: 'Learn Game',
         theme: AppTheme.lightTheme,

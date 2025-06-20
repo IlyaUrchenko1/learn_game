@@ -18,4 +18,18 @@ class LeaderboardService {
       'completedLevels': completedLevels,
     }, SetOptions(merge: true));
   }
+
+  Future<void> updateUserPhone(String name, String? phone) async {
+    final docRef = _db.collection('leaderboard').doc(name);
+    await docRef.set({'phone': phone}, SetOptions(merge: true));
+  }
+
+  Future<String?> getPhoneNumber(String name) async {
+    final docRef = _db.collection('leaderboard').doc(name);
+    final doc = await docRef.get();
+    if (doc.exists && doc.data()!.containsKey('phone')) {
+      return doc.data()!['phone'] as String?;
+    }
+    return null;
+  }
 }

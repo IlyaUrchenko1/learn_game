@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:learn_game/data/levels_data.dart';
+import 'package:learn_game/data/services/leaderboard_service.dart';
 import 'package:learn_game/providers/name_provider.dart';
 import 'package:learn_game/providers/progress_provider.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +16,27 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final LeaderboardService _leaderboardService = LeaderboardService();
+  String? _currentPhoneNumber;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPhoneNumber();
+  }
+
+  Future<void> _loadPhoneNumber() async {
+    final nameProvider = Provider.of<NameProvider>(context, listen: false);
+    final phoneNumber = await _leaderboardService.getPhoneNumber(
+      nameProvider.name,
+    );
+    if (mounted) {
+      setState(() {
+        _currentPhoneNumber = phoneNumber;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final String currentDate = DateFormat(
@@ -39,6 +62,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 24),
               _buildProgressCard(context, completedCount, totalLevels),
+              const SizedBox(height: 24),
+              _buildVisibilityCard(
+                context,
+                nameProvider,
+                () => _showEditPhoneDialog(context, nameProvider),
+              ),
               const SizedBox(height: 24),
               _buildSectionTitle(context, 'Обратная связь'),
               _buildActionsCard(context),
@@ -81,6 +110,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   nameProvider.saveName(newName);
                 }
                 Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showEditPhoneDialog(
+    BuildContext context,
+    NameProvider nameProvider,
+  ) async {
+    final phoneController = TextEditingController(text: _currentPhoneNumber);
+    final maskFormatter = MaskTextInputFormatter(
+      mask: '+7 (###) ###-##-##',
+      filter: {"#": RegExp(r'[0-9]')},
+      type: MaskAutoCompletionType.lazy,
+    );
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Изменить номер телефона'),
+          content: TextField(
+            controller: phoneController,
+            keyboardType: TextInputType.phone,
+            autofocus: true,
+            decoration: const InputDecoration(
+              hintText: '+7 (999) 999-99-99',
+              border: OutlineInputBorder(),
+              filled: true,
+            ),
+            inputFormatters: [maskFormatter],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Отмена'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Сохранить'),
+              onPressed: () async {
+                final newPhone = maskFormatter.getUnmaskedText();
+                await _leaderboardService.updateUserPhone(
+                  nameProvider.name,
+                  newPhone.isNotEmpty ? newPhone : null,
+                );
+                if (mounted) {
+                  setState(() {
+                    _currentPhoneNumber = newPhone.isNotEmpty ? newPhone : null;
+                  });
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Номер телефона обновлен!'),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
               },
             ),
           ],
@@ -168,6 +259,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
               minHeight: 8,
               borderRadius: BorderRadius.circular(4),
               backgroundColor: theme.colorScheme.surfaceContainerHighest,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVisibilityCard(
+    BuildContext context,
+    NameProvider nameProvider,
+    VoidCallback onEdit,
+  ) {
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Станьте заметным', style: theme.textTheme.titleLarge),
+            const SizedBox(height: 8),
+            Text(
+              'Добавьте свой номер, чтобы лучшие IT-компании и стартапы могли связаться с вами и предложить работу мечты. Ваш контакт увидят только после символической оплаты.',
+              style: theme.textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: const Icon(Symbols.call),
+              title: Text(_currentPhoneNumber ?? 'Номер не указан'),
+              trailing: const Icon(Symbols.edit),
+              onTap: onEdit,
             ),
           ],
         ),
